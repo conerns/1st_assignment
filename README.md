@@ -1,0 +1,1 @@
+Pipeline utilizzando linguaggio Java facendo uso di Maven.
