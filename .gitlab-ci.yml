@@ -1,0 +1,8 @@
+image: maven:3.6.3-jdk-11
+
+stages: ["build"]
+
+compile: 
+    stage: build
+    script:
+        - mvn compile
