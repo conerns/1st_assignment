@@ -7,7 +7,7 @@ Per il progetto, è stato utilizzato un programma Java che permette di eseguire 
 
 La pipeline implementata si costituisce di 7 stages, di cui riportiamo lo stato attuale:
 1. Build: completata
-2. Verify: work in progress, la fase di spotbugs viene eseguita correttamente, mentre checkstyle riporta degli errori
+2. Verify: completata
 3. Unit test: completata
 4. Integration test: completata
 5. Package: da implementare 
