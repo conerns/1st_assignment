@@ -4,17 +4,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-{
-    /**
-     * Rigorous Test :-)
-     */
+public class AppTest {
     @Test
     public void shouldAnswerWithTrue()
     {
-        assertTrue( true );
+    	Utente daAggiungere = new Utente(4, "Utente Generico", 0);
+    	assert(daAggiungere.getIdUtente() == 4);
+    	assert(daAggiungere.getNomeUtente().equals("Utente Generico"));
+    	assert(daAggiungere.getNumeroAccessi() == 0);
     }
 }
+
