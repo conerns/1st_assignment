@@ -1,7 +1,39 @@
 image: maven:3.6.3-jdk-11
 
-stages: ["package"]
 
+stages: ["build","verify", "unit-test", "integration-test", "package"]
+
+compile: 
+    stage: build
+    script:
+        - mvn compile
+spotbugs:
+  stage: verify
+  script:
+     - mvn spotbugs:check
+  artifacts:
+    paths:
+        - target/spotbugsXml.xml
+
+# Linter
+checkstyle:
+  stage: verify
+  script:
+      - mvn -Dmaven.javadoc.skip=true checkstyle:check
+  allow_failure: true
+  artifacts:
+      paths:
+        - target/checkstyle-result.xml
+
+unit-test:
+    stage: unit-test
+    script:
+        - mvn test
+integration-test:
+    stage: integration-test
+    script:
+        - mvn failsafe:integration-test
+        
 package:
     stage: package
     script:
