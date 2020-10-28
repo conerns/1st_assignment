@@ -18,7 +18,8 @@ spotbugs:
 checkstyle:
   stage: verify
   script:
-      - mvn release:perform -Darguments="-Dmaven.javadoc.skip=true" checkstyle:check
+      - mvn -Dmaven.javadoc.skip=true checkstyle:check
+  allow_failure: true
   artifacts:
       paths:
         - target/checkstyle-result.xml
