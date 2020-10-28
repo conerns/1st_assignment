@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 import org.junit.Test;
 
-public class IntegrationTest {
+public class IT {
 
 	@Test
 	public void test() {
