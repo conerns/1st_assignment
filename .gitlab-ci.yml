@@ -1,7 +1,7 @@
 image: maven:3.6.3-jdk-11
 
 
-stages: ["build","verify", "unit-test", "integration-test", "package"]
+stages: ["build","verify", "unit-test", "integration-test", "package","release"]
 
 compile: 
     stage: build
@@ -43,3 +43,15 @@ package:
         paths:
             - target/*.jar
         when: on_success
+docker-image:
+    stage: release
+    image: docker:stable
+    services:
+        - docker:dind
+    dependencies: []
+    script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build $CONTAINER_IMAGE_NAME
+    - docker push $CONTAINER_IMAGE_NAME
+
+
