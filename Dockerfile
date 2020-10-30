@@ -1,6 +1,5 @@
 # Utilizzo image
-FROM 3.6.3-jdk-11
-WORKDIR /usr/app
+FROM maven:3.6.3-jdk-11
 COPY ./target/pipeline-1.0-SNAPSHOT.jar	./file-pipiline.jar
 
 EXPOSE 8080
