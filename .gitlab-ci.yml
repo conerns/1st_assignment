@@ -25,13 +25,11 @@ deploy-stage:
     stage: deploy
     image: debian:stable-slim
     before_script:
-        - chmod 400 $SSH_PRIVATE_KEY
-        - 'which ssh-agent || ( apt-get update -qq && apt-get install -qq openssh-client )'
+        - 'which ssh-agent || ( apt-get install -qq openssh-client )'
         - eval $(ssh-agent -s)
-        - ssh-add $SSH_PRIVATE_KEY
+        - ssh-add <(echo "$SSH_PRIVATE_KEY")
         - mkdir -p ~/.ssh
-        - chmod 700 ~/.ssh
-        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'config'
     cache: {}
     dependencies: []
     environment:
@@ -40,4 +38,3 @@ deploy-stage:
     script:
         - chmod +x script_deploy_step.sh
         - bash script_deploy_step.sh
-
