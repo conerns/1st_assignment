@@ -1,5 +1,10 @@
 image: maven:3.6.3-jdk-11
 stages: ["release", "deploy"]
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  
 docker-image:
     stage: release
     image: docker:stable
@@ -11,9 +16,6 @@ docker-image:
         - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
 
-variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_DRIVER: overlay2
 deploy-stage:
     stage: deploy
     image: debian:stable-slim
@@ -29,5 +31,5 @@ deploy-stage:
         name: script_deploy_step
         url: https://13.73.147.152
     script:
-        - chmod +x script_deploy_step.sh
-        - bash script_deploy_step.sh
+        - ssh -o PreferredAuthentications=publickey azureuser@13.73.147.152 "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY && docker rm --force pipeline || true && docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && docker run -d --restart on-failure:5 --name pipeline $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && exit"
+
