@@ -25,11 +25,13 @@ deploy-stage:
     stage: deploy
     image: debian:stable-slim
     before_script:
-        - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+        - 'which ssh-agent || ( apt-get update -qq && apt-get install -qq openssh-client )'
         - eval $(ssh-agent -s)
-        - ssh-add <(echo "$SSH_PRIVATE_KEY")
         - mkdir -p ~/.ssh
-        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'config'
+        - chmod 700 ~/.ssh
+        - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        - chmod 600  ~/.ssh/id_rsa
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     cache: {}
     dependencies: []
     environment:
