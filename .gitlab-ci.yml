@@ -1,17 +1,69 @@
 image: maven:3.6.3-jdk-11
-stages: ["deploy"]
+stages: ["build","verify", "unit-test", "integration-test", "package", "release", "deploy"]
 
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
+
+compile: 
+    stage: build
+    script:
+        - mvn compile
+spotbugs:
+  stage: verify
+  script:
+     - mvn spotbugs:check
+  artifacts:
+    paths:
+        - target/spotbugsXml.xml
+
+# Linter
+checkstyle:
+  stage: verify
+  script:
+      - mvn -Dmaven.javadoc.skip=true checkstyle:check
+  allow_failure: true
+  artifacts:
+      paths:
+        - target/checkstyle-result.xml
+
+unit-test:
+    stage: unit-test
+    script:
+        - mvn test
+
+integration-test:
+    stage: integration-test
+    script:
+        - mvn test-compile failsafe:integration-test failsafe:verify
+
+package:
+    stage: package
+    script:
+        - mvn -DskipTests clean package 
+    dependencies: []
+    artifacts:
+        paths:
+            - target/*.jar
+        when: on_success
+        
+docker-image:
+    stage: release
+    image: docker:stable
+    services:
+        - docker:dind
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+        - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
 deploy-stage:
     stage: deploy
     image: debian:stable-slim
     before_script:
-        - chmod 400 $SSH_PRIVATE_KEY
-        - 'which ssh-agent || ( apt-get update -qq && apt-get install openssh-client -qq )'
+        - 'command -v ssh-agent >/dev/null || ( apt-get update -qq && apt-get install openssh-client -qq )'
         - eval $(ssh-agent -s)
-        - ssh-add $SSH_PRIVATE_KEY
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'        
@@ -21,5 +73,4 @@ deploy-stage:
         name: script_deploy_step
         url: https://52.164.218.129
     script:
-        - chmod +x .gitlab-ci-deploy-staging.sh
-        - bash .gitlab-ci-deploy-staging.sh
+        - ssh azureuser@52.164.218.129 "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY && docker rm --force pipeline || true && docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && docker run -d --restart on-failure:5 --name pipeline $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && exit"
