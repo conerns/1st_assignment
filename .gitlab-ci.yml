@@ -1,6 +1,4 @@
 image: maven:3.6.3-jdk-11
-
-
 stages: ["build","verify", "unit-test", "integration-test", "package","release"]
 
 compile: 
@@ -29,11 +27,12 @@ unit-test:
     stage: unit-test
     script:
         - mvn test
+
 integration-test:
     stage: integration-test
     script:
-        - mvn failsafe:integration-test
-        
+        - mvn test-compile failsafe:integration-test failsafe:verify
+
 package:
     stage: package
     script:

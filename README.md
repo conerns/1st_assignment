@@ -10,6 +10,6 @@ La pipeline implementata si costituisce di 7 stages, di cui riportiamo lo stato 
 2. Verify: completata
 3. Unit test: completata
 4. Integration test: completata
-5. Package: da implementare 
+5. Package: completata
 6. Release: da implementare 
 7. Deploy: da implementare
