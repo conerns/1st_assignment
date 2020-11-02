@@ -85,3 +85,8 @@ Durante l'esecuzione in remoto la fase di ssh genera un errore.
 Permission denied (publickey,password).
 ```
 Cercando di correggere, l'errore sembra sia dovuto ai permessi collegati al file contenente la chiave privata.
+
+## Link della repository
+```
+https://gitlab.com/conerns/2020_assignment1_pipeline
+```
