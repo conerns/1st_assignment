@@ -1,5 +1,5 @@
 # Utilizzo image
-FROM maven:3.6.3-jdk-11
+FROM openjdk:11-jdk-slim
 RUN apt-get update && apt-get install -y curl
 
 COPY ./target/pipeline-1.0-SNAPSHOT.jar	./file-pipiline.jar
