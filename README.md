@@ -76,15 +76,8 @@ La fase di Release utilizza il GitLab Container Registry per la creazione dell'i
 Per la fase di Deploy è stato utilizzato Azure per la creazione di una macchina virtuale. Il collegamento e la condivisione dei file avviene trammite la ssh key.
 
 ## Problemi 
-Durante la fase di Deploy, avendo comunque effettuato la verifica in locale della ssh-key tramite:
-```
-ssh -i <path-to-key> host@domain
-```
-Durante l'esecuzione in remoto la fase di ssh genera un errore. 
-```
-Permission denied (publickey,password).
-```
-Cercando di correggere, l'errore sembra sia dovuto ai permessi collegati al file contenente la chiave privata.
+Gli errori sono stati riscontrati maggiormente nella fase di Deploy.
+Inizialmente il collegamento ssh non andava a buon fine. In seguito, usando una nuova macchina non viene trovato il container.
 
 ## Link della repository
 ```
