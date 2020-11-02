@@ -111,9 +111,8 @@
           <artifactId>heroku-maven-plugin</artifactId>
           <version>3.0.4</version>
           <configuration>
-            <appName>2020_assignment1_Pipeline</appName>
             <processTypes>
-              <web>java $JAVA_OPTS -cp target/pipeline-1.0-SNAPSHOT.jar Main</web>
+              <web>java $JAVA_OPTS -cp target/pipeline-1.0-SNAPSHOT.jar</web>
             </processTypes>
           </configuration>
         </plugin>
