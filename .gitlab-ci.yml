@@ -20,5 +20,4 @@ deploy-stage:
         name: script_deploy_step
         url: https://13.73.147.152
     script:
-        - ssh -o PreferredAuthentications=publickey azureuser@13.73.147.152 "sudo docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY && sudo docker rm --force pipeline || true && sudo docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && sudo docker run -d --restart on-failure:5 --name pipeline $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && exit"
-
+        - ssh -o PreferredAuthentications=publickey azureuser@13.73.147.152 "sudo docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY && sudo docker rm --force pipeline-1.0-SNAPSHOT || true && sudo docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && sudo docker run -d --restart on-failure:5 --name pipeline-1.0-SNAPSHOT $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && exit"       
