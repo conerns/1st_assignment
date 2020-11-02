@@ -1,37 +1,5 @@
 image: maven:3.6.3-jdk-11
-stages: ["build","verify", "unit-test", "integration-test", "package","release"]
-
-compile: 
-    stage: build
-    script:
-        - mvn compile
-spotbugs:
-  stage: verify
-  script:
-     - mvn spotbugs:check
-  artifacts:
-    paths:
-        - target/spotbugsXml.xml
-
-# Linter
-checkstyle:
-  stage: verify
-  script:
-      - mvn -Dmaven.javadoc.skip=true checkstyle:check
-  allow_failure: true
-  artifacts:
-      paths:
-        - target/checkstyle-result.xml
-
-unit-test:
-    stage: unit-test
-    script:
-        - mvn test
-
-integration-test:
-    stage: integration-test
-    script:
-        - mvn test-compile failsafe:integration-test failsafe:verify
+stages: ["package","release"]
 
 package:
     stage: package
@@ -53,4 +21,8 @@ docker-image:
         - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
         - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
+stage: deploy
+    script:
+        - mvn heroku:deploy
+    when: on_success
 
