@@ -15,12 +15,12 @@ Per il progetto, è stato utilizzato un programma Java che permette a chi lo uti
 7. Deploy
 
 ### Build
-La fase di **Build** è stata realizzata utilizzando il goal *compile* di Maven:
+La fase di Build è stata realizzata utilizzando il goal *compile* di Maven:
 ```
 mvn compile
 ```
 ### Verify
-Durante la fase di **Verify**, sono stati utilizzati due plugin maven (Checkstyle e Spotbugs), rispettivamente per eseguire una verifica dello stile del source code e una analisi statica del source code.
+Durante la fase di Verify, sono stati utilizzati due plugin maven (Checkstyle e Spotbugs), rispettivamente per eseguire una verifica dello stile del source code e una analisi statica del source code.
 Per la fase di Checkstyle non vengono considerati eventuali errori corrispondenti alla Javodoc:
 ```
 mvn -Dmaven.javadoc.skip=true checkstyle:check
