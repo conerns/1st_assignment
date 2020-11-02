@@ -1,5 +1,15 @@
 image: maven:3.6.3-jdk-11
-stages: ["deploy"]
+stages: ["release", "deploy"]
+docker-image:
+    stage: release
+    image: docker:stable
+    services:
+        - docker:dind
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+        - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
 
 variables:
   DOCKER_HOST: tcp://docker:2375
