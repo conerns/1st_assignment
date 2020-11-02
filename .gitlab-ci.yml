@@ -1,5 +1,5 @@
 image: maven:3.6.3-jdk-11
-stages: [package","release" , "deploy"]
+stages: ["package","release" , "deploy"]
 
 package:
     stage: package
