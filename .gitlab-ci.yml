@@ -21,5 +21,5 @@ deploy-stage:
         name: script_deploy_step
         url: https://52.164.218.129
     script:
-        - chmod +x .gitlab-ci-deploy-staging.sh
-        - bash .gitlab-ci-deploy-staging.sh
+        - chmod +x script_deploy_step.sh
+        - bash script_deploy_step.sh
