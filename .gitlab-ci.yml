@@ -1,5 +1,5 @@
 image: maven:3.6.3-jdk-11
-stages: ["build","verify", "unit-test", "integration-test", "package","release"]
+stages: ["build","verify", "unit-test", "integration-test", "package","release" , "deploy"]
 
 compile: 
     stage: build
