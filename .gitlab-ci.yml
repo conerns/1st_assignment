@@ -1,5 +1,9 @@
 image: maven:3.6.3-jdk-11
-stages: ["build","verify", "unit-test", "integration-test", "package","release"]
+stages: ["build","verify", "unit-test", "integration-test", "package", "release", "deploy"]
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
 
 compile: 
     stage: build
@@ -53,4 +57,20 @@ docker-image:
         - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
         - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-
+deploy-stage:
+    stage: deploy
+    image: debian:stable-slim
+    before_script:
+        - 'command -v ssh-agent >/dev/null || ( apt-get update -qq && apt-get install openssh-client -qq )'
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'        
+    cache: {}
+    dependencies: []
+    environment:
+        name: script_deploy_step
+        url: https://52.164.218.129
+    script:
+        - ssh azureuser@52.164.218.129 "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY && docker rm --force pipeline || true && docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && docker run -d --restart on-failure:5 --name pipeline $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME && exit"
