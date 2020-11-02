@@ -1,5 +1,37 @@
 image: maven:3.6.3-jdk-11
-stages: ["package","release","deploy"]
+stages: ["build","verify", "unit-test", "integration-test", "package","release"]
+
+compile: 
+    stage: build
+    script:
+        - mvn compile
+spotbugs:
+  stage: verify
+  script:
+     - mvn spotbugs:check
+  artifacts:
+    paths:
+        - target/spotbugsXml.xml
+
+# Linter
+checkstyle:
+  stage: verify
+  script:
+      - mvn -Dmaven.javadoc.skip=true checkstyle:check
+  allow_failure: true
+  artifacts:
+      paths:
+        - target/checkstyle-result.xml
+
+unit-test:
+    stage: unit-test
+    script:
+        - mvn test
+
+integration-test:
+    stage: integration-test
+    script:
+        - mvn test-compile failsafe:integration-test failsafe:verify
 
 package:
     stage: package
@@ -20,9 +52,24 @@ docker-image:
         - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
         - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
         - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-deploy-phase:
+
+deploy-stage:
     stage: deploy
+    image: debian:stable-slim
+    before_script:
+        - chmod 400 $SSH_PRIVATE_KEY
+        - 'which ssh-agent || ( apt-get update -qq && apt-get install -qq openssh-client )'
+        - eval $(ssh-agent -s)
+        - ssh-add $SSH_PRIVATE_KEY
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    cache: {}
+    dependencies: []
+    environment:
+        name: script_deploy_step
+        url: https://$DEPLOY_IP
     script:
-        - mvn heroku:deploy
-    when: on_success
+        - chmod +x script_deploy_step.sh
+        - bash script_deploy_step.sh
 
