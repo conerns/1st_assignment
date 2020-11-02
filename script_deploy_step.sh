@@ -1,5 +1,5 @@
 set -xe
-ssh azureuser@56.164.218.129 \
+ssh -o PreferredAuthentications=publickey -p 22 azureuser@52.164.218.195 \
 "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY \
 && docker rm --force pipeline || true \
 && docker pull $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME \
